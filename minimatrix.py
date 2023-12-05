@@ -11,7 +11,7 @@ class Matrix:
 		data: 一个二维的嵌套列表，表示矩阵的数据。即 data[i][j] 表示矩阵第 i+1 行第 j+1 列处的元素。
 			  当参数 data 不为 None 时，应根据参数 data 确定矩阵的形状。默认值: None
 		dim: 一个元组 (n, m) 表示矩阵是 n 行 m 列, 当参数 data 为 None 时，根据该参数确定矩阵的形状；
-			 当参数 data 不为 None 时，忽略该参数。如果 data 和 dim 同时为 None, 应抛出异常。默认值: None
+			 当参数 data 不为 None 时，忽略该参数。如果 data 和 dim 同时为 None, 应抛出异常。[raise TypeError?]默认值: None
 		init_value: 当提供的 data 参数为 None 时，使用该 init_value 初始化一个 n 行 m 列的矩阵，
 					即矩阵各元素均为 init_value. 当参数 data 不为 None 时，忽略该参数。 默认值: 0
 	
@@ -31,6 +31,21 @@ class Matrix:
 			 [2 3]]
 	"""
 	def __init__(self, data=None, dim=None, init_value=0):
+		if data == None and dim == None:
+			raise TypeError("Arguments 'data' and 'dim' cannot be None in the meantime")
+		elif data == None:
+			self.dim = dim
+			self.data = [[init_value]*(dim[1])]*(dim[0])
+		else:
+			self.data = data
+			line = len(data)
+			row = len(data[1])
+			for i in data:
+				if row != len(i):
+					raise TypeError("Argument 'data' is not a valid matrix")
+			self.dim = (line,row)
+		
+			
 		# self.data
 		# self.dim
 		pass
@@ -476,3 +491,6 @@ def vectorize(func):
 if __name__ == "__main__":
 	print("test here")
 	pass
+
+ma = Matrix(init_value=3)
+print(ma.data,ma.dim)
