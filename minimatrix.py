@@ -490,7 +490,7 @@ def vectorize(func):
 
 if __name__ == "__main__":
 	print("test here")
-	pass
+
 
 ma = Matrix(init_value=3)
 print(ma.data,ma.dim)
