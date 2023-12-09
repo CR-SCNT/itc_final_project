@@ -42,7 +42,7 @@ class Matrix:
 			row = len(data[1])
 			for i in data:
 				if row != len(i):
-					raise TypeError("Argument 'data' is not a valid matrix")
+					raise ValueError("Argument 'data' is not a valid matrix")
 			self.dim = (line,row)
 		
 			
@@ -54,8 +54,8 @@ class Matrix:
 		r"""
 		返回矩阵的形状 dim
 		"""
-		pass
-
+		return self.dim
+	
 	def reshape(self, newdim):
 		r"""
 		将矩阵从(m,n)维拉伸为newdim=(m1,n1)
@@ -68,7 +68,12 @@ class Matrix:
 		Returns:
 			Matrix: 一个 Matrix 类型的返回结果, 表示 reshape 得到的结果
 		"""
-		pass
+		if newdim[0]*newdim[1] != self.dim[0]*self.dim[1]:
+			raise ValueError("Invalid newdim")
+		all_ele = []
+		for i in range(self.dim[0]):
+			for j in range(self.dim[1]):
+				pass
 
 	def dot(self, other):
 		r"""
