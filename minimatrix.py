@@ -70,10 +70,15 @@ class Matrix:
 		"""
 		if newdim[0]*newdim[1] != self.dim[0]*self.dim[1]:
 			raise ValueError("Invalid newdim")
-		all_ele = []
+		new_matrix_data = [[0]*newdim[1] for x in range(newdim[0])]
 		for i in range(self.dim[0]):
 			for j in range(self.dim[1]):
-				pass
+				index = j + self.dim[1]*i
+				m = index//newdim[1]
+				n = index%newdim[1]
+				new_matrix_data[m][n] = self.data[i][j]
+		new_matrix = Matrix(data=new_matrix_data)
+		return new_matrix
 
 	def dot(self, other):
 		r"""
@@ -496,6 +501,3 @@ def vectorize(func):
 if __name__ == "__main__":
 	print("test here")
 
-
-ma = Matrix(init_value=3)
-print(ma.data,ma.dim)
