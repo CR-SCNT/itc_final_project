@@ -39,13 +39,17 @@ class Matrix:
             self.dim = dim
             self.data = [[init_value] * (dim[1]) for x in range(dim[0])]
         else:
-            self.data = data
-            line = len(data)
-            row = len(data[1])
-            for i in data:
-                if row != len(i):
-                    raise ValueError("Argument 'data' is not a valid matrix")
-            self.dim = (line, row)
+            if len(data) == 1:
+                self.data = data
+                self.dim = (1, len(self.data[0]))
+            else:
+                self.data = data
+                line = len(data)
+                row = len(data[1])
+                for i in data:
+                    if row != len(i):
+                        raise ValueError("Argument 'data' is not a valid matrix")
+                self.dim = (line, row)
 
         # self.data
         # self.dim
@@ -156,7 +160,29 @@ class Matrix:
                 >>> [[6]
                          [15]]
         """
-        pass
+        if axis == None:
+            result = 0
+            for i in range(self.dim[0]):
+                result += sum(self.data[i])
+            return Matrix(data=[[result]])
+        elif axis == 0:
+            result = [[]]
+            for i in range(self.dim[1]):
+                temp = 0
+                for j in range(self.dim[0]):
+                    temp += self.data[j][i]
+                result[0].append(temp)
+            return Matrix(data=result)
+        elif axis == 1:
+            result = []
+            for i in range(self.dim[0]):
+                temp = 0
+                for j in range(self.dim[1]):
+                    temp += self.data[i][j]
+                result.append([temp])
+            return Matrix(data=result)
+        else:
+            raise ValueError("Axis must be 0, 1, or None.")
 
     def copy(self):
         r"""
