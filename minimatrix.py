@@ -2,7 +2,7 @@
 # Fan Cheng, 2022
 
 import random
-
+import copy
 
 class Matrix:
     r"""
@@ -20,40 +20,40 @@ class Matrix:
             dim: 一个元组 (n, m) 表示矩阵的形状
             data: 一个二维的嵌套列表，表示矩阵的数据
 
-    Examples:
-            >>> mat1 = Matrix(dim=(2, 3), init_value=0)
-            >>> print(mat1)
-            >>> [[0 0 0]
-                     [0 0 0]]
-            >>> mat2 = Matrix(data=[[0, 1], [1, 2], [2, 3]])
-            >>> print(mat2)
-            >>> [[0 1]
-                     [1 2]
-                     [2 3]]
-    """
-
-    def __init__(self, data=None, dim=None, init_value=0):
-        if data == None and dim == None:
-            raise TypeError("Arguments 'data' and 'dim' cannot be None in the meantime")
-        elif data == None:
-            self.dim = dim
-            self.data = [[init_value] * (dim[1]) for x in range(dim[0])]
-        else:
-            if len(data) == 1:
-                self.data = data
-                self.dim = (1, len(self.data[0]))
-            else:
-                self.data = data
-                line = len(data)
-                row = len(data[1])
-                for i in data:
-                    if row != len(i):
-                        raise ValueError("Argument 'data' is not a valid matrix")
-                self.dim = (line, row)
-
-        # self.data
-        # self.dim
-        pass
+	Examples:
+		>>> mat1 = Matrix(dim=(2, 3), init_value=0)
+		>>> print(mat1)
+		>>> [[0 0 0]
+			 [0 0 0]]
+		>>> mat2 = Matrix(data=[[0, 1], [1, 2], [2, 3]])
+		>>> print(mat2)
+		>>> [[0 1]
+			 [1 2]
+			 [2 3]]
+	"""
+	def __init__(self, data=None, dim=None, init_value=0):
+		if data == None and dim == None:
+			raise TypeError("Arguments 'data' and 'dim' cannot be None in the meantime")
+		elif data == None:
+			self.dim = dim
+			self.data = [[init_value]*(dim[1]) for x in range(dim[0])]
+		else:
+			self.data = data
+			if len(data) == 1:
+				row = len(data)
+				column = len(data[0])
+			else:
+				row = len(data)
+				column = len(data[1])
+				for i in data:
+					if column != len(i):
+						raise ValueError("Argument 'data' is not a valid matrix")
+			self.dim = (row,column)
+		
+			
+		# self.data
+		# self.dim
+		pass
 
     def shape(self):
         r"""
@@ -224,27 +224,44 @@ class Matrix:
         Returns:
                 索引结果，单个元素或者矩阵切片
 
-        Examples:
-                >>> x = Matrix(data=[
-                                        [0, 1, 2, 3],
-                                        [4, 5, 6, 7],
-                                        [8, 9, 0, 1]
-                                ])
-                >>> x[1, 2]
-                >>> 6
-                >>> x[0:2, 1:4]
-                >>> [[1 2 3]
-                         [5 6 7]]
-                >>> x[:, :2]
-                >>> [[0 1]
-                         [4 5]
-                         [8 9]]
-        """
-        pass
-
-    def __setitem__(self, key, value):
-        r"""
-        实现 Matrix 的赋值功能, 通过 x[key] = value 进行赋值的功能
+		Examples:
+			>>> x = Matrix(data=[
+						[0, 1, 2, 3],
+						[4, 5, 6, 7],
+						[8, 9, 0, 1]
+					])
+			>>> x[1, 2]
+			>>> 6
+			>>> x[0:2, 1:4]
+			>>> [[1 2 3]
+				 [5 6 7]]
+			>>> x[:, :2]
+			>>> [[0 1]
+				 [4 5]
+				 [8 9]]
+		"""
+		new_data=copy.deepcopy(self.data)
+		if type(key[0])== int and type(key[1]) == int:
+			return self.data[key[0]][key[1]]
+		else:
+			new_data = new_data[key[0]]
+			if type(key[0]) == int:
+				new_data = [new_data]
+			for i in range(len(new_data)):
+				new_data[i] = new_data[i][key[1]]
+				if type(new_data[i]) == list:
+					flag = 1
+				else:
+					flag = 0
+			if flag == 1:
+					result = Matrix(new_data)
+			else:
+				result = new_data
+		return result
+	
+	def __setitem__(self, key, value):
+		r"""
+		实现 Matrix 的赋值功能, 通过 x[key] = value 进行赋值的功能
 
         类似于 __getitem__ , 需要具备以下基本特性:
         1. 单元素赋值
@@ -286,36 +303,55 @@ class Matrix:
         Args:
                 n: int, 自然数
 
-        Returns:
-                Matrix: 运算结果
-        """
-        pass
+		Returns:
+			Matrix: 运算结果
+		"""
+		result = self
+		if self.dim[1] != self.dim[0]:
+			raise ValueError("The matrix should be a square")
+		for i in range(n):
+			result = result.dot(self)
+		return result
 
     def __add__(self, other):
         r"""
         两个矩阵相加
         该函数应当不改变 self 和 other 的内容
 
-        Args:
-                other: 一个 Matrix 实例
+		Args:
+			other: 一个 Matrix 实例
+		
+		Returns:
+			Matrix: 运算结果
+		"""
+		if self.dim != other.dim:
+			raise ValueError("The dimensions of matrices don't match.")
+		else:
+			result = [[0]*self.dim[1] for x in range(self.dim[0])] 
+			for i in range(self.dim[0]):
+				for j in range(self.dim[1]):
+					result[i][j] = self.data[i][j]+other.data[i][j]		
+		return Matrix(result)
+	
+	def __sub__(self, other):
+		r"""
+		两个矩阵相减
+		该函数应当不改变 self 和 other 的内容
 
-        Returns:
-                Matrix: 运算结果
-        """
-        pass
-
-    def __sub__(self, other):
-        r"""
-        两个矩阵相减
-        该函数应当不改变 self 和 other 的内容
-
-        Args:
-                other: 一个 Matrix 实例
-
-        Returns:
-                Matrix: 运算结果
-        """
-        pass
+		Args:
+			other: 一个 Matrix 实例
+		
+		Returns:
+			Matrix: 运算结果
+		"""
+		if self.dim != other.dim:
+			raise ValueError("The dimensions of matrices don't match.")
+		else:
+			result = [[0]*self.dim[1] for x in range(self.dim[0])] 
+			for i in range(self.dim[0]):
+				for j in range(self.dim[1]):
+					result[i][j] = self.data[i][j]-other.data[i][j]		
+		return Matrix(result)
 
     def __mul__(self, other):
         r"""
@@ -329,54 +365,64 @@ class Matrix:
         Returns:
                 Matrix: 运算结果
 
-        Examples:
-                >>> Matrix(data=[[1, 2]]) * Matrix(data=[[3, 4]])
-                >>> [[3 8]]
-        """
-        pass
+		Examples:
+			>>> Matrix(data=[[1, 2]]) * Matrix(data=[[3, 4]])
+			>>> [[3 8]]
+		"""
+		if self.dim != other.dim:
+			raise ValueError("The dimensions of matrices don't match.")
+		else:
+			result = [[0]*self.dim[1] for x in range(self.dim[0])] 
+			for i in range(self.dim[0]):
+				for j in range(self.dim[1]):
+					result[i][j] = self.data[i][j]*other.data[i][j]
+		return Matrix(result)
 
     def __len__(self):
         r"""
         返回矩阵元素的数目
 
-        Returns:
-                int: 元素数目，即 行数 * 列数
-        """
-        pass
+		Returns:
+			int: 元素数目，即 行数 * 列数
+		"""
+		return self.dim[1]*self.dim[0]
+		pass
 
-    def __str__(self):
-        r"""
-        按照
-        [[  0   1   4   9  16  25  36  49]
-         [ 64  81 100 121 144 169 196 225]
-         [256 289 324 361 400 441 484 529]]
-        的格式将矩阵表示为一个 字符串
-        ！！！ 注意返回值是字符串
-        """
-        max_digit = 0
-        for i in range(self.dim[0]):
-            for j in range(self.dim[1]):
-                if len(str(self.data[i][j])) > max_digit:
-                    max_digit = len(str(self.data[i][j]))
-        lines = ""
-        for i in range(self.dim[0]):
-            line0 = ""
-            for j in range(self.dim[1]):
-                element = str(self.data[i][j])
-                element0 = " " * (max_digit - len(element)) + element
-                if j != self.dim[1] - 1:
-                    line0 += element0 + " "
-                else:
-                    line0 += element0
-            line0 = "[" + line0 + "]"
-            if i == 0:
-                lines += line0 + "\n"
-            elif i != 0 and i != self.dim[0] - 1:
-                lines += " " + line0 + "\n"
-            else:
-                lines += " " + line0
-        str_matrix = "[" + lines + "]"
-        return str_matrix
+	def __str__(self): 
+		r"""
+		按照
+		[[  0   1   4   9  16  25  36  49]
+ 		 [ 64  81 100 121 144 169 196 225]
+ 		 [256 289 324 361 400 441 484 529]]
+ 		的格式将矩阵表示为一个 字符串
+ 		！！！ 注意返回值是字符串
+		"""
+		max_digit = 0
+		for i in range(self.dim[0]):
+			for j in range(self.dim[1]):
+				if len(str(self.data[i][j])) > max_digit:
+					max_digit = len(str(self.data[i][j]))
+		lines = ""
+		for i in range(self.dim[0]):
+			line0 = ""
+			for j in range(self.dim[1]):
+				element = str(self.data[i][j])
+				element0 = " "*(max_digit - len(element))+element
+				if j != self.dim[1]-1:					
+					line0 += element0 +" "
+				else:
+					line0 += element0
+			line0 = "[" + line0 + "]"
+			if i == 0 and self.dim[0]!=1:
+				lines += line0 +"\n"
+			elif i == 0 and self.dim[0]==1:
+				lines += line0
+			elif i != 0 and i != self.dim[0]-1 :
+				lines += " " + line0 +"\n"
+			else:
+				lines += " " + line0
+		str_matrix = "[" + lines +"]"+"\n"
+		return str_matrix
 
     def det(self):
         r"""
@@ -572,6 +618,4 @@ def vectorize(func):
 
 
 if __name__ == "__main__":
-    print("test here")
-A = Matrix(data=[[1, 2], [3, 4]])
-print(A.dot(A))
+	print("test here")
