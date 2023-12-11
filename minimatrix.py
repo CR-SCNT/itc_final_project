@@ -2,6 +2,7 @@
 # Fan Cheng, 2022
 
 import random
+import copy
 
 class Matrix:
 	r"""
@@ -38,12 +39,16 @@ class Matrix:
 			self.data = [[init_value]*(dim[1]) for x in range(dim[0])]
 		else:
 			self.data = data
-			line = len(data)
-			row = len(data[1])
-			for i in data:
-				if row != len(i):
-					raise ValueError("Argument 'data' is not a valid matrix")
-			self.dim = (line,row)
+			if len(data) == 1:
+				row = len(data)
+				column = len(data[0])
+			else:
+				row = len(data)
+				column = len(data[1])
+				for i in data:
+					if column != len(i):
+						raise ValueError("Argument 'data' is not a valid matrix")
+			self.dim = (row,column)
 		
 			
 		# self.data
@@ -209,8 +214,25 @@ class Matrix:
 				 [4 5]
 				 [8 9]]
 		"""
-		pass
-
+		new_data=copy.deepcopy(self.data)
+		if type(key[0])== int and type(key[1]) == int:
+			return self.data[key[0]][key[1]]
+		else:
+			new_data = new_data[key[0]]
+			if type(key[0]) == int:
+				new_data = [new_data]
+			for i in range(len(new_data)):
+				new_data[i] = new_data[i][key[1]]
+				if type(new_data[i]) == list:
+					flag = 1
+				else:
+					flag = 0
+			if flag == 1:
+					result = Matrix(new_data)
+			else:
+				result = new_data
+		return result
+	
 	def __setitem__(self, key, value):
 		r"""
 		实现 Matrix 的赋值功能, 通过 x[key] = value 进行赋值的功能
@@ -258,7 +280,12 @@ class Matrix:
 		Returns:
 			Matrix: 运算结果
 		"""
-		pass
+		result = self
+		if self.dim[1] != self.dim[0]:
+			raise ValueError("The matrix should be a square")
+		for i in range(n):
+			result = result.dot(self)
+		return result
 
 	def __add__(self, other):
 		r"""
@@ -271,8 +298,15 @@ class Matrix:
 		Returns:
 			Matrix: 运算结果
 		"""
-		pass
-
+		if self.dim != other.dim:
+			raise ValueError("The dimensions of matrices don't match.")
+		else:
+			result = [[0]*self.dim[1] for x in range(self.dim[0])] 
+			for i in range(self.dim[0]):
+				for j in range(self.dim[1]):
+					result[i][j] = self.data[i][j]+other.data[i][j]		
+		return Matrix(result)
+	
 	def __sub__(self, other):
 		r"""
 		两个矩阵相减
@@ -284,7 +318,14 @@ class Matrix:
 		Returns:
 			Matrix: 运算结果
 		"""
-		pass
+		if self.dim != other.dim:
+			raise ValueError("The dimensions of matrices don't match.")
+		else:
+			result = [[0]*self.dim[1] for x in range(self.dim[0])] 
+			for i in range(self.dim[0]):
+				for j in range(self.dim[1]):
+					result[i][j] = self.data[i][j]-other.data[i][j]		
+		return Matrix(result)
 
 	def __mul__(self, other):
 		r"""
@@ -302,7 +343,14 @@ class Matrix:
 			>>> Matrix(data=[[1, 2]]) * Matrix(data=[[3, 4]])
 			>>> [[3 8]]
 		"""
-		pass
+		if self.dim != other.dim:
+			raise ValueError("The dimensions of matrices don't match.")
+		else:
+			result = [[0]*self.dim[1] for x in range(self.dim[0])] 
+			for i in range(self.dim[0]):
+				for j in range(self.dim[1]):
+					result[i][j] = self.data[i][j]*other.data[i][j]
+		return Matrix(result)
 
 	def __len__(self):
 		r"""
@@ -311,6 +359,7 @@ class Matrix:
 		Returns:
 			int: 元素数目，即 行数 * 列数
 		"""
+		return self.dim[1]*self.dim[0]
 		pass
 
 	def __str__(self): 
@@ -338,13 +387,15 @@ class Matrix:
 				else:
 					line0 += element0
 			line0 = "[" + line0 + "]"
-			if i == 0 :
+			if i == 0 and self.dim[0]!=1:
 				lines += line0 +"\n"
+			elif i == 0 and self.dim[0]==1:
+				lines += line0
 			elif i != 0 and i != self.dim[0]-1 :
 				lines += " " + line0 +"\n"
 			else:
 				lines += " " + line0
-		str_matrix = "[" + lines +"]"
+		str_matrix = "[" + lines +"]"+"\n"
 		return str_matrix
 
 	def det(self):
@@ -532,5 +583,3 @@ def vectorize(func):
 
 if __name__ == "__main__":
 	print("test here")
-A = Matrix(data=[[1,2],[3,4]])
-print(A.dot(A))
