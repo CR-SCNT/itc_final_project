@@ -324,19 +324,28 @@ class Matrix:
  		的格式将矩阵表示为一个 字符串
  		！！！ 注意返回值是字符串
 		"""
+		max_digit = 0
+		for i in range(self.dim[0]):
+			for j in range(self.dim[1]):
+				if len(str(self.data[i][j])) > max_digit:
+					max_digit = len(str(self.data[i][j]))
 		lines = ""
 		for i in range(self.dim[0]):
 			line0 = ""
 			for j in range(self.dim[1]):
-				if j != self.dim[1]-1:
-					line0 += str(self.data[i][j])+" "
+				element = str(self.data[i][j])
+				element0 = " "*(max_digit - len(element))+element
+				if j != self.dim[1]-1:					
+					line0 += element0 +" "
 				else:
-					line0 += str(self.data[i][j])
+					line0 += element0
 			line0 = "[" + line0 + "]"
-			if i != self.dim[0]-1:
+			if i == 0 :
 				lines += line0 +"\n"
+			elif i != 0 and i != self.dim[0]-1 :
+				lines += " " + line0 +"\n"
 			else:
-				lines += line0
+				lines += " " + line0
 		str_matrix = "[" + lines +"]"
 		return str_matrix
 
@@ -372,6 +381,7 @@ class Matrix:
 			一个 Python int 表示计算结果
 		"""
 		pass
+	
 
 def I(n):
 	'''
