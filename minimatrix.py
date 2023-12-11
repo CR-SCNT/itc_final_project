@@ -35,7 +35,7 @@ class Matrix:
 			raise TypeError("Arguments 'data' and 'dim' cannot be None in the meantime")
 		elif data == None:
 			self.dim = dim
-			self.data = [[init_value]*(dim[1])]*(dim[0])
+			self.data = [[init_value]*(dim[1]) for x in range(dim[0])]
 		else:
 			self.data = data
 			line = len(data)
@@ -97,7 +97,17 @@ class Matrix:
 			>>> [[ 7 10]
 				 [15 22]]
 		"""
-		pass
+		if self.dim[1]!=other.dim[0]:
+			raise ValueError("The dimensions of the matrices don't match" )
+		result = Matrix(dim=(self.dim[0],other.dim[1]))
+		for m in range(result.dim[0]):
+			for n in range(result.dim[1]):
+				temp = 0
+				for k in range(self.dim[1]):
+					temp += self.data[m][k]*other.data[k][n]
+				result.data[m][n] = temp
+		return result
+
 
 	def T(self):
 		r"""
@@ -305,7 +315,7 @@ class Matrix:
 		"""
 		pass
 
-	def __str__(self):
+	def __str__(self): #WIP!!!!! don't use!!!
 		r"""
 		按照
 		[[  0   1   4   9  16  25  36  49]
@@ -314,7 +324,21 @@ class Matrix:
  		的格式将矩阵表示为一个 字符串
  		！！！ 注意返回值是字符串
 		"""
-		pass
+		lines = ""
+		for i in range(self.dim[0]):
+			line0 = ""
+			for j in range(self.dim[1]):
+				if j != self.dim[1]-1:
+					line0 += str(self.data[i][j])+" "
+				else:
+					line0 += str(self.data[i][j])
+			line0 = "[" + line0 + "]"
+			if i != self.dim[0]-1:
+				lines += line0 +"\n"
+			else:
+				lines += line0
+		str_matrix = "[" + lines +"]"
+		return str_matrix
 
 	def det(self):
 		r"""
@@ -500,4 +524,5 @@ def vectorize(func):
 
 if __name__ == "__main__":
 	print("test here")
-
+A = Matrix(data=[[1,2],[3,4]])
+print(A.dot(A))
