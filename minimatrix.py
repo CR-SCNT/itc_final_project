@@ -2,7 +2,7 @@
 # Fan Cheng, 2022
 
 import random
-
+import copy
 
 class Matrix:
     r"""
@@ -191,7 +191,9 @@ class Matrix:
         Returns:
                 Matrix: 一个self的备份
         """
-        pass
+        data_copy = copy.deepcopy(self.data)
+        dim_copy = self.dim  # Necessary?
+        return Matrix(data=data_copy, dim=dim_copy)
 
     def Kronecker_product(self, other):
         r"""
@@ -416,7 +418,10 @@ def I(n):
     """
     return an n*n unit matrix
     """
-
+    zero = [[0 for i in range(n)] for j in range(n)]
+    for i in range(n):
+        zero[i][i] = 1
+    return Matrix(data=zero)
 
 def narray(dim, init_value=1):  # dim (,,,,,), init为矩阵元素初始值
     r"""
@@ -430,7 +435,7 @@ def narray(dim, init_value=1):  # dim (,,,,,), init为矩阵元素初始值
             Matrix: 一个 Matrix 类型的实例
     """
     # return Matrix(dim, None, init_value)
-
+    return Matrix(dim=dim, init_value=init_value)
 
 def arange(start, end, step):
     r"""
@@ -444,7 +449,8 @@ def arange(start, end, step):
     Returns:
             Matrix: 一个 Matrix 实例
     """
-    pass
+    result = [[x for x in range(start, end, step)]]
+    return Matrix(data=result)
 
 
 def zeros(dim):
@@ -457,7 +463,8 @@ def zeros(dim):
     Returns:
             Matrix: 一个 Matrix 类型的实例
     """
-    pass
+    zero_matrix = [[0 for x in range(dim[1])] for i in range(dim[0])]
+    return Matrix(data=zero_matrix)
 
 
 def zeros_like(matrix):
@@ -476,7 +483,9 @@ def zeros_like(matrix):
             >>> [[0 0 0]
                      [0 0 0]]
     """
-    pass
+    rows = matrix.dim[0]
+    columns = matrix.dim[1]
+    return zeros((rows, columns))
 
 
 def ones(dim):
@@ -484,7 +493,8 @@ def ones(dim):
     返回一个维数为dim 的全1 narray
     类同 zeros
     """
-    pass
+    one_matrix = [[1 for x in range(dim[1])] for i in range(dim[0])]
+    return Matrix(data=one_matrix)
 
 
 def ones_like(matrix):
@@ -492,7 +502,9 @@ def ones_like(matrix):
     返回一个维数和matrix一样 的全1 narray
     类同 zeros_like
     """
-    pass
+    rows = matrix.dim[0]
+    columns = matrix.dim[1]
+    return ones((rows, columns))
 
 
 def nrandom(dim):
