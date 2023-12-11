@@ -108,7 +108,6 @@ class Matrix:
 				result.data[m][n] = temp
 		return result
 
-
 	def T(self):
 		r"""
 		矩阵的转置
@@ -305,7 +304,6 @@ class Matrix:
 		"""
 		pass
 
-
 	def __len__(self):
 		r"""
 		返回矩阵元素的数目
@@ -315,7 +313,7 @@ class Matrix:
 		"""
 		pass
 
-	def __str__(self): #WIP!!!!! don't use!!!
+	def __str__(self): 
 		r"""
 		按照
 		[[  0   1   4   9  16  25  36  49]
