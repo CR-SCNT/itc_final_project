@@ -203,7 +203,17 @@ class Matrix:
         Returns:
                 Matrix: Kronecke product 的计算结果
         """
-        pass
+        for i in range(self.dim[0]):
+            for j in range(self.dim[1]):
+                if j ==0:
+                    m0 = other.num_mul(self[i,j])
+                else:
+                    m0 = m0.mergematrix(other.num_mul(self[i,j]))
+            if i == 0:
+                m1 = m0
+            else:
+                m1 = m1.mergematrix(m0,1)
+        return m1
 
     def __getitem__(self, key):
         r"""
@@ -466,7 +476,41 @@ class Matrix:
         """
         pass
 
+    def num_mul(self,n):
+        """
+        矩阵的数乘 其中n为int/float类型的实例, 返回一个Matrix实例 不改变self
+        """
+        result = Matrix([[0]*self.dim[1] for x in range(self.dim[0])])
+        for i in range(self.dim[0]):
+            for j in range(self.dim[1]):
+                result[i,j] = self[i,j] * n
+        return result
 
+    def mergematrix(self,other,axis=0):
+        """
+        合并两个矩阵, axis为合并方向,
+        axis = 0横向合并
+        axis = 1纵向合并
+        默认值为0.
+        不改变self
+        """
+        temp = copy.deepcopy(self.data)
+        match axis:
+            case 0 :
+                if self.dim[0] != other.dim[0]:
+                    raise ValueError("The dimensions of matrices don't match.")
+                else:
+                    for i in range(self.dim[0]):
+                        temp[i].extend(other.data[i])
+            case 1 :
+                if self.dim[1] != other.dim[1]:
+                    raise ValueError("The dimensions of matrices don't match.")
+                else:
+                    temp += other.data
+            case _:
+                raise ValueError
+        return Matrix(temp)  
+    
 def I(n):
     """
     return an n*n unit matrix
@@ -506,7 +550,6 @@ def arange(start, end, step):
     result = [[x for x in range(start, end, step)]]
     return Matrix(data=result)
 
-
 def zeros(dim):
     r"""
     返回一个维数为dim 的全0 narray
@@ -519,7 +562,6 @@ def zeros(dim):
     """
     zero_matrix = [[0 for x in range(dim[1])] for i in range(dim[0])]
     return Matrix(data=zero_matrix)
-
 
 def zeros_like(matrix):
     r"""
@@ -541,7 +583,6 @@ def zeros_like(matrix):
     columns = matrix.dim[1]
     return zeros((rows, columns))
 
-
 def ones(dim):
     r"""
     返回一个维数为dim 的全1 narray
@@ -549,7 +590,6 @@ def ones(dim):
     """
     one_matrix = [[1 for x in range(dim[1])] for i in range(dim[0])]
     return Matrix(data=one_matrix)
-
 
 def ones_like(matrix):
     r"""
@@ -560,7 +600,6 @@ def ones_like(matrix):
     columns = matrix.dim[1]
     return ones((rows, columns))
 
-
 def nrandom(dim):
     r"""
     返回一个维数为dim 的随机 narray
@@ -568,14 +607,12 @@ def nrandom(dim):
     """
     pass
 
-
 def nrandom_like(matrix):
     r"""
     返回一个维数和matrix一样 的随机 narray
     参数与返回值类型同 zeros_like
     """
     pass
-
 
 def concatenate(items, axis=0):
     r"""
@@ -601,7 +638,6 @@ def concatenate(items, axis=0):
             >>> [[0 1 2 3 4 5 0 1 2]]
     """
     pass
-
 
 def vectorize(func):
     r"""
@@ -639,3 +675,6 @@ def vectorize(func):
 
 if __name__ == "__main__":
     print("test here")
+A = Matrix([[1,5,3],[5,1,4]])
+B = Matrix([[1],[5]])
+print(A.Kronecker_product(B))
