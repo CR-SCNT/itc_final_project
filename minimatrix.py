@@ -385,7 +385,6 @@ class Matrix:
             int: 元素数目，即 行数 * 列数
         """
         return self.dim[1] * self.dim[0]
-        pass
 
     def __str__(self):
         r"""
