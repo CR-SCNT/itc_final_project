@@ -478,7 +478,9 @@ class Matrix:
 
     def num_mul(self,n):
         """
-        矩阵的数乘 其中n为int/float类型的实例, 返回一个Matrix实例 不改变self
+        矩阵的数乘 
+        其中n为int/float类型的实例,
+        返回一个Matrix实例 不改变self
         """
         result = Matrix([[0]*self.dim[1] for x in range(self.dim[0])])
         for i in range(self.dim[0]):
@@ -487,12 +489,10 @@ class Matrix:
         return result
 
     def mergematrix(self,other,axis=0):
-        """
+        r"""
         合并两个矩阵, axis为合并方向,
-        axis = 0横向合并
-        axis = 1纵向合并
-        默认值为0.
-        不改变self
+        axis = 0横向合并,axis = 1纵向合并
+        默认值为0.不改变self
         """
         temp = copy.deepcopy(self.data)
         match axis:
@@ -520,7 +520,6 @@ def I(n):
         zero[i][i] = 1
     return Matrix(data=zero)
 
-
 def narray(dim, init_value=1):  # dim (,,,,,), init为矩阵元素初始值
     r"""
     返回一个matrix，维数为dim，初始值为init_value
@@ -535,7 +534,6 @@ def narray(dim, init_value=1):  # dim (,,,,,), init为矩阵元素初始值
 
     res = Matrix(None, dim, init_value)
     return res
-
 
 def arange(start, end, step):
     r"""
@@ -643,7 +641,11 @@ def concatenate(items, axis=0):
             >>> concatenate((A, B, A), axis=1)
             >>> [[0 1 2 3 4 5 0 1 2]]
     """
-    pass
+    temp = items[0]
+    if len(items)>1:
+        for i in items[1:]:
+            temp = temp.mergematrix(i,axis)
+    return(temp)
 
 def vectorize(func):
     r"""
@@ -689,6 +691,8 @@ def vectorize(func):
 
 if __name__ == "__main__":
     print("test here")
+
 A = Matrix([[1,5,3],[5,1,4]])
-B = Matrix([[1],[5]])
-print(A.Kronecker_product(B))
+B = Matrix([[1,5,3],[5,1,4]])
+lst = [A,B]
+print(concatenate(lst,1))
