@@ -4,6 +4,7 @@
 import random
 import copy
 
+
 class Matrix:
     r"""
         自定义的二维矩阵类
@@ -31,12 +32,13 @@ class Matrix:
              [1 2]
              [2 3]]
     """
+
     def __init__(self, data=None, dim=None, init_value=0):
         if data == None and dim == None:
             raise TypeError("Arguments 'data' and 'dim' cannot be None in the meantime")
         elif data == None:
             self.dim = dim
-            self.data = [[init_value]*(dim[1]) for x in range(dim[0])]
+            self.data = [[init_value] * (dim[1]) for x in range(dim[0])]
         else:
             self.data = data
             if len(data) == 1:
@@ -48,8 +50,7 @@ class Matrix:
                 for i in data:
                     if column != len(i):
                         raise ValueError("Argument 'data' is not a valid matrix")
-            self.dim = (row,column)
-
+            self.dim = (row, column)
 
     def shape(self):
         r"""
@@ -187,7 +188,10 @@ class Matrix:
         Returns:
                 Matrix: 一个self的备份
         """
-        return copy.deepcopy(self)
+
+        data_copy = copy.deepcopy(self.data)
+        dim_copy = self.dim  # Necessary?
+        return Matrix(data=data_copy, dim=dim_copy)
 
     def Kronecker_product(self, other):
         r"""
@@ -236,8 +240,8 @@ class Matrix:
                  [4 5]
                  [8 9]]
         """
-        new_data=copy.deepcopy(self.data)
-        if type(key[0])== int and type(key[1]) == int:
+        new_data = copy.deepcopy(self.data)
+        if type(key[0]) == int and type(key[1]) == int:
             return self.data[key[0]][key[1]]
         else:
             new_data = new_data[key[0]]
@@ -250,11 +254,11 @@ class Matrix:
                 else:
                     flag = 0
             if flag == 1:
-                    result = Matrix(new_data)
+                result = Matrix(new_data)
             else:
                 result = new_data
         return result
-    
+
     def __setitem__(self, key, value):
         r"""
         实现 Matrix 的赋值功能, 通过 x[key] = value 进行赋值的功能
@@ -289,6 +293,7 @@ class Matrix:
                          [4 5 1 2]
                          [8 9 3 4]]
         """
+
         if type(key[0])== int and type(key[1]) == int:
             self.data[key[0]][key[1]] = value
         else:
@@ -298,7 +303,7 @@ class Matrix:
                 for i in range(value.dim[0]):
                     self.data[key[0]][i][key[1]] = value.data[i]
         return self.data
-
+      
     def __pow__(self, n):
         r"""
         矩阵的n次幂，n为自然数
@@ -324,19 +329,19 @@ class Matrix:
 
         Args:
             other: 一个 Matrix 实例
-        
+
         Returns:
             Matrix: 运算结果
         """
         if self.dim != other.dim:
             raise ValueError("The dimensions of matrices don't match.")
         else:
-            result = [[0]*self.dim[1] for x in range(self.dim[0])] 
+            result = [[0] * self.dim[1] for x in range(self.dim[0])]
             for i in range(self.dim[0]):
                 for j in range(self.dim[1]):
-                    result[i][j] = self.data[i][j]+other.data[i][j]		
+                    result[i][j] = self.data[i][j] + other.data[i][j]
         return Matrix(result)
-    
+
     def __sub__(self, other):
         r"""
         两个矩阵相减
@@ -344,17 +349,17 @@ class Matrix:
 
         Args:
             other: 一个 Matrix 实例
-        
+
         Returns:
             Matrix: 运算结果
         """
         if self.dim != other.dim:
             raise ValueError("The dimensions of matrices don't match.")
         else:
-            result = [[0]*self.dim[1] for x in range(self.dim[0])] 
+            result = [[0] * self.dim[1] for x in range(self.dim[0])]
             for i in range(self.dim[0]):
                 for j in range(self.dim[1]):
-                    result[i][j] = self.data[i][j]-other.data[i][j]		
+                    result[i][j] = self.data[i][j] - other.data[i][j]
         return Matrix(result)
 
     def __mul__(self, other):
@@ -376,10 +381,10 @@ class Matrix:
         if self.dim != other.dim:
             raise ValueError("The dimensions of matrices don't match.")
         else:
-            result = [[0]*self.dim[1] for x in range(self.dim[0])] 
+            result = [[0] * self.dim[1] for x in range(self.dim[0])]
             for i in range(self.dim[0]):
                 for j in range(self.dim[1]):
-                    result[i][j] = self.data[i][j]*other.data[i][j]
+                    result[i][j] = self.data[i][j] * other.data[i][j]
         return Matrix(result)
 
     def __len__(self):
@@ -389,10 +394,10 @@ class Matrix:
         Returns:
             int: 元素数目，即 行数 * 列数
         """
-        return self.dim[1]*self.dim[0]
+        return self.dim[1] * self.dim[0]
         pass
 
-    def __str__(self): 
+    def __str__(self):
         r"""
         按照
         [[  0   1   4   9  16  25  36  49]
@@ -411,21 +416,21 @@ class Matrix:
             line0 = ""
             for j in range(self.dim[1]):
                 element = str(self.data[i][j])
-                element0 = " "*(max_digit - len(element))+element
-                if j != self.dim[1]-1:					
-                    line0 += element0 +" "
+                element0 = " " * (max_digit - len(element)) + element
+                if j != self.dim[1] - 1:
+                    line0 += element0 + " "
                 else:
                     line0 += element0
             line0 = "[" + line0 + "]"
-            if i == 0 and self.dim[0]!=1:
-                lines += line0 +"\n"
-            elif i == 0 and self.dim[0]==1:
+            if i == 0 and self.dim[0] != 1:
+                lines += line0 + "\n"
+            elif i == 0 and self.dim[0] == 1:
                 lines += line0
-            elif i != 0 and i != self.dim[0]-1 :
-                lines += " " + line0 +"\n"
+            elif i != 0 and i != self.dim[0] - 1:
+                lines += " " + line0 + "\n"
             else:
                 lines += " " + line0
-        str_matrix = "[" + lines +"]"+"\n"
+        str_matrix = "[" + lines + "]" + "\n"
         return str_matrix
 
     def det(self):
@@ -466,7 +471,10 @@ def I(n):
     """
     return an n*n unit matrix
     """
-
+    zero = [[0 for i in range(n)] for j in range(n)]
+    for i in range(n):
+        zero[i][i] = 1
+    return Matrix(data=zero)
 
 def narray(dim, init_value=1):  # dim (,,,,,), init为矩阵元素初始值
     r"""
@@ -479,8 +487,9 @@ def narray(dim, init_value=1):  # dim (,,,,,), init为矩阵元素初始值
     Returns:
             Matrix: 一个 Matrix 类型的实例
     """
-    return Matrix(None, dim, init_value)
 
+    res = Matrix(None, dim, init_value)
+    return res
 
 def arange(start, end, step):
     r"""
@@ -494,7 +503,8 @@ def arange(start, end, step):
     Returns:
             Matrix: 一个 Matrix 实例
     """
-    pass
+    result = [[x for x in range(start, end, step)]]
+    return Matrix(data=result)
 
 
 def zeros(dim):
@@ -507,7 +517,8 @@ def zeros(dim):
     Returns:
             Matrix: 一个 Matrix 类型的实例
     """
-    pass
+    zero_matrix = [[0 for x in range(dim[1])] for i in range(dim[0])]
+    return Matrix(data=zero_matrix)
 
 
 def zeros_like(matrix):
@@ -526,7 +537,9 @@ def zeros_like(matrix):
             >>> [[0 0 0]
                      [0 0 0]]
     """
-    pass
+    rows = matrix.dim[0]
+    columns = matrix.dim[1]
+    return zeros((rows, columns))
 
 
 def ones(dim):
@@ -534,7 +547,8 @@ def ones(dim):
     返回一个维数为dim 的全1 narray
     类同 zeros
     """
-    pass
+    one_matrix = [[1 for x in range(dim[1])] for i in range(dim[0])]
+    return Matrix(data=one_matrix)
 
 
 def ones_like(matrix):
@@ -542,7 +556,9 @@ def ones_like(matrix):
     返回一个维数和matrix一样 的全1 narray
     类同 zeros_like
     """
-    pass
+    rows = matrix.dim[0]
+    columns = matrix.dim[1]
+    return ones((rows, columns))
 
 
 def nrandom(dim):
