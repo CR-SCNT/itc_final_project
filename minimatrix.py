@@ -640,7 +640,15 @@ def vectorize(func):
             >>> [[1, 1]
                      [2, 2]]
     """
-    pass
+
+    def F(x):
+        res = Matrix(None, x.dim)
+        for i in range(res.dim[0]):
+            for j in range(res.dim[1]):
+                res.data[i][j] = func(x.data[i][j])
+        return res
+
+    return F
 
 
 if __name__ == "__main__":
