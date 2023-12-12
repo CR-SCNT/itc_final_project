@@ -443,6 +443,7 @@ class Matrix:
         Returns:
                 Matrix: 一个 Matrix 实例，表示逆矩阵
         """
+
         pass
 
     def rank(self):
@@ -466,6 +467,7 @@ def I(n):
         zero[i][i] = 1
     return Matrix(data=zero)
 
+
 def narray(dim, init_value=1):  # dim (,,,,,), init为矩阵元素初始值
     r"""
     返回一个matrix，维数为dim，初始值为init_value
@@ -481,6 +483,7 @@ def narray(dim, init_value=1):  # dim (,,,,,), init为矩阵元素初始值
 
     res = Matrix(None, dim, init_value)
     return res
+
 
 def arange(start, end, step):
     r"""
@@ -557,7 +560,11 @@ def nrandom(dim):
     返回一个维数为dim 的随机 narray
     参数与返回值类型同 zeros
     """
-    pass
+    res = Matrix(None, dim)
+    for i in range(dim[0]):
+        for j in range(dim[1]):
+            res.data[i][j] = random.random()
+    return res
 
 
 def nrandom_like(matrix):
@@ -565,7 +572,7 @@ def nrandom_like(matrix):
     返回一个维数和matrix一样 的随机 narray
     参数与返回值类型同 zeros_like
     """
-    pass
+    return nrandom(matrix.dim)
 
 
 def concatenate(items, axis=0):
