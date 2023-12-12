@@ -188,6 +188,7 @@ class Matrix:
         Returns:
                 Matrix: 一个self的备份
         """
+
         data_copy = copy.deepcopy(self.data)
         dim_copy = self.dim  # Necessary?
         return Matrix(data=data_copy, dim=dim_copy)
@@ -292,8 +293,17 @@ class Matrix:
                          [4 5 1 2]
                          [8 9 3 4]]
         """
-        pass
 
+        if type(key[0])== int and type(key[1]) == int:
+            self.data[key[0]][key[1]] = value
+        else:
+            if len(self.data[key[0]]) != value.dim[0] or len(self.data[key[0]][0][key[1]]) != value.dim[1]:
+                raise ValueError("The dimensions of matrices don't match.")
+            else:
+                for i in range(value.dim[0]):
+                    self.data[key[0]][i][key[1]] = value.data[i]
+        return self.data
+      
     def __pow__(self, n):
         r"""
         矩阵的n次幂，n为自然数
@@ -477,7 +487,6 @@ def narray(dim, init_value=1):  # dim (,,,,,), init为矩阵元素初始值
     Returns:
             Matrix: 一个 Matrix 类型的实例
     """
-    # return Matrix(dim, None, init_value)
 
     res = Matrix(None, dim, init_value)
     return res
