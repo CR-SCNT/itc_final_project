@@ -35,7 +35,7 @@ class Matrix:
 
     def __init__(self, data=None, dim=None, init_value=0):
         if data == None and dim == None:
-            raise TypeError("Arguments 'data' and 'dim' cannot be None in the meantime")
+            raise TypeError("Arguments 'data' and 'dim' cannot be None in the meantime.")
         elif data == None:
             self.dim = dim
             self.data = [[init_value] * (dim[1]) for x in range(dim[0])]
@@ -49,7 +49,7 @@ class Matrix:
                 column = len(data[1])
                 for i in data:
                     if column != len(i):
-                        raise ValueError("Argument 'data' is not a valid matrix")
+                        raise ValueError("Argument 'data' is not a valid matrix.")
             self.dim = (row, column)
 
     def shape(self):
@@ -71,7 +71,7 @@ class Matrix:
                 Matrix: 一个 Matrix 类型的返回结果, 表示 reshape 得到的结果
         """
         if newdim[0] * newdim[1] != self.dim[0] * self.dim[1]:
-            raise ValueError("Invalid newdim")
+            raise ValueError("Invalid newdim.")
         new_matrix_data = [[0] * newdim[1] for x in range(newdim[0])]
         for i in range(self.dim[0]):
             for j in range(self.dim[1]):
@@ -100,7 +100,7 @@ class Matrix:
                          [15 22]]
         """
         if self.dim[1] != other.dim[0]:
-            raise ValueError("The dimensions of the matrices don't match")
+            raise ValueError("The dimensions of the matrices don't match.")
         result = Matrix(dim=(self.dim[0], other.dim[1]))
         for m in range(result.dim[0]):
             for n in range(result.dim[1]):
@@ -190,7 +190,7 @@ class Matrix:
         """
 
         data_copy = copy.deepcopy(self.data)
-        dim_copy = self.dim  # Necessary?
+        dim_copy = self.dim
         return Matrix(data=data_copy, dim=dim_copy)
 
     def Kronecker_product(self, other):
@@ -327,7 +327,7 @@ class Matrix:
         """
         result = self
         if self.dim[1] != self.dim[0]:
-            raise ValueError("The matrix should be a square")
+            raise ValueError("The matrix should be a square.")
         for i in range(n):
             result = result.dot(self)
         return result
@@ -476,7 +476,109 @@ class Matrix:
         """
         pass
 
-    def num_mul(self,n):
+    def guass(self):
+        '''
+        Guass消元法, 给定一个 Matrix 的实例, 
+        返回其简化阶梯型(一个 Matrix 的实例)
+        '''
+        result1 = self.copy()
+        result2 = result1.to_row_echelon_form()
+        return result2.to_row_standard_simplest_form()
+
+        
+        
+    def to_row_echelon_form(self):
+        result = self.copy()
+        result = result.normalize_rows()
+        for i in range(result.dim[0] - 1):
+            index1 = 0
+            while result[i, index1] == 0:
+                index1 += 1
+                if index1 > result.dim[1] - 1:
+                    break
+                
+            if index1 > result.dim[1] - 1:
+                continue
+            else:
+                for j in range(i + 1, result.dim[0]):
+                    result = result.add_k_row1_to_row2(i + 1, j + 1, -(result[j, index1] / result[i, index1]))
+                print(result)
+                result = result.normalize_rows()
+        print(result)
+        return result
+
+    def to_row_standard_simplest_form(self):
+        result = self.copy()
+        for i in range(result.dim[0]):
+            if result[i:i + 1, :].is_zero():
+                break
+            elif i == 0:
+                index1 = 0
+                while result[0, index1] == 0:
+                    index1 += 1
+                result = result.k_times_row(1, 1 / result[0, index1])
+                
+            else:
+                index2 = 0
+                while result[i, index2] == 0:
+                    index2 += 1
+                result = result.k_times_row(i + 1, 1 / result[i, index2])
+                
+                for j in range(i):
+                    result = result.add_k_row1_to_row2(i + 1, j + 1, -result[j,index2])
+                    
+                result = result.normalize_rows()
+        
+        return result
+    
+    def normalize_rows(self):
+        result = self.copy()
+        for i in range(result.dim[0] - 1):
+            for j in range(i + 1, result.dim[0]):
+                flag1 = 0
+                flag2 = 0
+                while result[i, flag1] == 0:
+                    if flag1 == result.dim[1] - 1:
+                        break
+                    flag1 += 1
+                while result[j, flag2] == 0:
+                    if flag2 == result.dim[1] - 1:
+                        break
+                    flag2 += 1
+                if flag2 < flag1:
+                    result = result.change_rows(i + 1, j + 1)
+                else:
+                    continue
+        return result
+
+
+    def change_rows(self, row1, row2):
+        result = self.copy()
+        temp = result[row2 - 1:row2, :]
+        result[row2 - 1:row2, :] = result[row1 - 1:row1, :]
+        result[row1 - 1:row1, :] = temp
+        return result
+
+    def k_times_row(self, row, k):
+        result = self.copy()
+        result[row - 1:row, :] = result[row - 1:row, :].num_mul(k)
+        return result
+    
+    def add_k_row1_to_row2(self, row1, row2, k):
+        result = self.copy()
+        result[row2 - 1:row2, :] += result[row1 - 1:row1, :].num_mul(k)
+        return result
+
+
+    def is_zero(self):
+        for i in range(self.dim[0]):
+            for j in range(self.dim[1]):
+                if self.data[i][j] != 0:
+                    return False
+        else:
+            return True
+
+    def num_mul(self, n):
         """
         矩阵的数乘 其中n为int/float类型的实例, 返回一个Matrix实例 不改变self
         """
