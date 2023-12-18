@@ -453,7 +453,7 @@ class Matrix:
                 ans *= square_matrix[i, i]
             if flag % 2 == 1:
                 ans *= -1
-            return ans
+            return round(ans, 4)
     
 
 
@@ -558,10 +558,7 @@ class Matrix:
         
         for i in range(self.dim[0]):
             for j in range(self.dim[1]):
-                if abs(self[i, j] - 1) < 1e-14:
-                    self[i, j] = 1
-                elif abs(self[i, j]) < 1e-14:
-                    self[i, j] = 0
+                self[i, j] = round(self[i, j], 4)
 
 
     def normalize_rows(self):
@@ -607,8 +604,9 @@ class Matrix:
 
 
     def change_rows_for_det(self, row1, row2, flag):
-        self = self.change_rows(row1=row1, row2=row2)
+        self.change_rows(row1=row1, row2=row2)
         flag += 1
+        return self, flag
 
     def k_times_row(self, row, k):
         self[row - 1:row, :] = self[row - 1:row, :].num_mul(k)
@@ -841,5 +839,4 @@ def vectorize(func):
 
 if __name__ == "__main__":
     print("test here")
-
-
+    
