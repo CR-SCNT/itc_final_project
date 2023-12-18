@@ -474,8 +474,8 @@ class Matrix:
         else:
             E = I(A.dim[0])
             A_E = A.mergematrix(other=E, axis=0)
-            E_A_reversed = A_E.to_row_standard_simplest_form()
-            result = E_A_reversed[:, A.dim[0]:]
+            A_E.to_row_standard_simplest_form()
+            result = A_E[:, A.dim[0]:]
             return result
             
 
@@ -489,7 +489,7 @@ class Matrix:
                 一个 Python int 表示计算结果
         """
         result = self.copy()
-        result = result.to_row_echelon_form()
+        result.to_row_echelon_form()
         ans = 0
         for i in range(result.dim[0]):
             if not result[i:i + 1, :].is_zero():
@@ -507,125 +507,115 @@ class Matrix:
         
         
     def to_row_echelon_form(self):
-        result = self.copy()
-        result = result.normalize_rows()
-        for i in range(result.dim[0] - 1):
+        self.normalize_rows()
+        for i in range(self.dim[0] - 1):
             index1 = 0
-            while result[i, index1] == 0:
+            while self[i, index1] == 0:
                 index1 += 1
-                if index1 > result.dim[1] - 1:
+                if index1 > self.dim[1] - 1:
                     break  
-            if index1 > result.dim[1] - 1:
+            if index1 > self.dim[1] - 1:
                 continue
             else:
-                for j in range(i + 1, result.dim[0]):
-                    result = result.add_k_row1_to_row2(i + 1, j + 1, -(result[j, index1] / result[i, index1]))
-                result = result.normalize_rows()
-        return result
+                for j in range(i + 1, self.dim[0]):
+                    self.add_k_row1_to_row2(i + 1, j + 1, -(self[j, index1] / self[i, index1]))
+                self.normalize_rows()
+
     
     def to_row_echelon_form_for_det(self):
-        result = self.copy()
         flag = 0
-        result, flag = result.normalize_rows_for_det(flag)
-        for i in range(result.dim[0] - 1):
+        self, flag = self.normalize_rows_for_det(flag)
+        for i in range(self.dim[0] - 1):
             index1 = 0
-            while result[i, index1] == 0:
+            while self[i, index1] == 0:
                 index1 += 1
-                if index1 > result.dim[1] - 1:
+                if index1 > self.dim[1] - 1:
                     break  
-            if index1 > result.dim[1] - 1:
+            if index1 > self.dim[1] - 1:
                 continue
             else:
-                for j in range(i + 1, result.dim[0]):
-                    result = result.add_k_row1_to_row2(i + 1, j + 1, -(result[j, index1] / result[i, index1]))
-                result, flag = result.normalize_rows_for_det(flag)
-        return result, flag
+                for j in range(i + 1, self.dim[0]):
+                    self.add_k_row1_to_row2(i + 1, j + 1, -(self[j, index1] / self[i, index1]))
+                self, flag = self.normalize_rows_for_det(flag=flag)
+        return self, flag
     
     def to_row_standard_simplest_form(self):
-        result = self.copy()
-        result = result.normalize_rows()
-        for i in range(result.dim[0]):
-            if result[i:i + 1, :].is_zero():
+        self.normalize_rows()
+        for i in range(self.dim[0]):
+            if self[i:i + 1, :].is_zero():
                 break
             else:
                 index1 = 0
-                while result[i, index1] == 0:
+                while self[i, index1] == 0:
                     index1 += 1
-                result = result.k_times_row(i + 1, 1 / result[i, index1])
-                for j in range(result.dim[0]):
+                self.k_times_row(i + 1, 1 / self[i, index1])
+                for j in range(self.dim[0]):
                     if j == i:
                         continue
                     else:
-                        result = result.add_k_row1_to_row2(i + 1, j + 1, -result[j,index1])
-                result = result.normalize_rows()
+                        self.add_k_row1_to_row2(i + 1, j + 1, -self[j,index1])
+                self.normalize_rows()
         
-        for i in range(result.dim[0]):
-            for j in range(result.dim[1]):
-                if abs(result[i, j] - 1) < 1e-14:
-                    result[i, j] = 1
-                elif abs(result[i, j]) < 1e-14:
-                    result[i, j] = 0
-        return result
+        for i in range(self.dim[0]):
+            for j in range(self.dim[1]):
+                if abs(self[i, j] - 1) < 1e-14:
+                    self[i, j] = 1
+                elif abs(self[i, j]) < 1e-14:
+                    self[i, j] = 0
+
 
     def normalize_rows(self):
-        result = self.copy()
         dt = {}
-        for i in range(result.dim[0]):
+        for i in range(self.dim[0]):
             column_index = 0
-            while result[i, column_index] == 0:
+            while self[i, column_index] == 0:
                 column_index += 1
-                if column_index == result.dim[1]:
+                if column_index == self.dim[1]:
                     break
             dt[i] = column_index
-        for i in range(result.dim[0]):
-            for j in range(i + 1, result.dim[0]):
+        for i in range(self.dim[0]):
+            for j in range(i + 1, self.dim[0]):
                 if dt[i] > dt[j]:
                     temp = dt[i]
                     dt[i] = dt[j]
                     dt[j] = temp
-                    result = result.change_rows(i + 1, j + 1)
-        return result
+                    self.change_rows(i + 1, j + 1)
+
 
     def normalize_rows_for_det(self, flag):
-        result = self.copy()
         dt = {}
-        for i in range(result.dim[0]):
+        for i in range(self.dim[0]):
             column_index = 0
-            while result[i, column_index] == 0:
+            while self[i, column_index] == 0:
                 column_index += 1
-                if column_index == result.dim[1]:
+                if column_index == self.dim[1]:
                     break
             dt[i] = column_index
-        for i in range(result.dim[0]):
-            for j in range(i + 1, result.dim[0]):
+        for i in range(self.dim[0]):
+            for j in range(i + 1, self.dim[0]):
                 if dt[i] > dt[j]:
                     temp = dt[i]
                     dt[i] = dt[j]
                     dt[j] = temp
-                    result, flag = result.change_rows_for_det(i + 1, j + 1, flag)
-        return result, flag
+                    self, flag = self.change_rows_for_det(i + 1, j + 1, flag)
+        return self, flag
 
     def change_rows(self, row1, row2):
-        result = self.copy()
-        temp = result[row2 - 1:row2, :]
-        result[row2 - 1:row2, :] = result[row1 - 1:row1, :]
-        result[row1 - 1:row1, :] = temp
-        return result
+        temp = self[row2 - 1:row2, :]
+        self[row2 - 1:row2, :] = self[row1 - 1:row1, :]
+        self[row1 - 1:row1, :] = temp
+
 
     def change_rows_for_det(self, row1, row2, flag):
-        result = self.copy()
-        result = result.change_rows(row1=row1, row2=row2)
+        self = self.change_rows(row1=row1, row2=row2)
         flag += 1
-        return result, flag
+
     def k_times_row(self, row, k):
-        result = self.copy()
-        result[row - 1:row, :] = result[row - 1:row, :].num_mul(k)
-        return result
+        self[row - 1:row, :] = self[row - 1:row, :].num_mul(k)
+
     
     def add_k_row1_to_row2(self, row1, row2, k):
-        result = self.copy()
-        result[row2 - 1:row2, :] += result[row1 - 1:row1, :].num_mul(k)
-        return result
+        self[row2 - 1:row2, :] += self[row1 - 1:row1, :].num_mul(k)
 
 
     def is_zero(self):
@@ -851,9 +841,5 @@ def vectorize(func):
 
 if __name__ == "__main__":
     print("test here")
-
-    A = Matrix([[1,1,4],[5,1,4]])
-    B = Matrix([[1,5,3],[5,1,4]])
-    print(A[1:,:])
 
 
