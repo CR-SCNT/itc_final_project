@@ -253,21 +253,13 @@ class Matrix:
         new_data = copy.deepcopy(self.data)
         if type(key[0]) == int and type(key[1]) == int:
             return self.data[key[0]][key[1]]
-        else:
+        elif type(key[0]) == slice and type(key[1]) == slice:
             new_data = new_data[key[0]]
-            if type(key[0]) == int:
-                new_data = [new_data]
             for i in range(len(new_data)):
                 new_data[i] = new_data[i][key[1]]
-                if type(new_data[i]) == list:
-                    flag = 1
-                else:
-                    flag = 0
-            if flag == 1:
-                result = Matrix(new_data)
-            else:
-                result = new_data
-        return result
+            return Matrix(new_data)
+        else:
+            raise TypeError("Invalid index for class 'Matrix'")
 
     def __setitem__(self, key, value):
         r"""
@@ -794,7 +786,8 @@ def vectorize(func):
 if __name__ == "__main__":
     print("test here")
 
-A = Matrix([[1,5,3],[5,1,4]])
-B = Matrix([[1,5,3],[5,1,4]])
-lst = [A,B]
-print(concatenate(lst,1))
+    A = Matrix([[1,1,4],[5,1,4]])
+    B = Matrix([[1,5,3],[5,1,4]])
+    print(A[1:,:])
+
+
