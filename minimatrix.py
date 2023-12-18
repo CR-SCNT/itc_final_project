@@ -1,4 +1,4 @@
-# Framework for IEEE course final project
+# Fra/ework(for IEEE course final project
 # Fan Cheng, 2022
 
 import random
@@ -295,8 +295,8 @@ class Matrix:
                 >>> x[1, 2] = 0
                 >>> x
                 >>> [[0 1 2 3]
-                         [4 5 0 7]
-                         [8 9 0 1]]
+                     [4 5 0 7]
+                     [8 9 0 1]]
                 >>> x[1:, 2:] = Matrix(data=[[1, 2], [3, 4]])
                 >>> x
                 >>> [[0 1 2 3]
@@ -482,8 +482,7 @@ class Matrix:
         返回其简化阶梯型(一个 Matrix 的实例)
         '''
         result1 = self.copy()
-        result2 = result1.to_row_echelon_form()
-        return result2.to_row_standard_simplest_form()
+        return result1.to_row_standard_simplest_form()
 
         
         
@@ -506,49 +505,50 @@ class Matrix:
                 result = result.normalize_rows()
         print(result)
         return result
-
+    
     def to_row_standard_simplest_form(self):
         result = self.copy()
+        result = result.normalize_rows()
         for i in range(result.dim[0]):
             if result[i:i + 1, :].is_zero():
                 break
-            elif i == 0:
-                index1 = 0
-                while result[0, index1] == 0:
-                    index1 += 1
-                result = result.k_times_row(1, 1 / result[0, index1])
-                
             else:
-                index2 = 0
-                while result[i, index2] == 0:
-                    index2 += 1
-                result = result.k_times_row(i + 1, 1 / result[i, index2])
-                
-                for j in range(i):
-                    result = result.add_k_row1_to_row2(i + 1, j + 1, -result[j,index2])
-                    
+                index1 = 0
+                while result[i, index1] == 0:
+                    index1 += 1
+                result = result.k_times_row(i + 1, 1 / result[i, index1])
+                for j in range(result.dim[0]):
+                    if j == i:
+                        continue
+                    else:
+                        result = result.add_k_row1_to_row2(i + 1, j + 1, -result[j,index1])
                 result = result.normalize_rows()
         
+        for i in range(result.dim[0]):
+            for j in range(result.dim[1]):
+                if abs(result[i, j] - 1) < 1e-14:
+                    result[i, j] = 1
+                elif abs(result[i, j]) < 1e-14:
+                    result[i, j] = 0
         return result
-    
+
     def normalize_rows(self):
         result = self.copy()
-        for i in range(result.dim[0] - 1):
+        dt = {}
+        for i in range(result.dim[0]):
+            column_index = 0
+            while result[i, column_index] == 0:
+                column_index += 1
+                if column_index == result.dim[1]:
+                    break
+            dt[i] = column_index
+        for i in range(result.dim[0]):
             for j in range(i + 1, result.dim[0]):
-                flag1 = 0
-                flag2 = 0
-                while result[i, flag1] == 0:
-                    if flag1 == result.dim[1] - 1:
-                        break
-                    flag1 += 1
-                while result[j, flag2] == 0:
-                    if flag2 == result.dim[1] - 1:
-                        break
-                    flag2 += 1
-                if flag2 < flag1:
+                if dt[i] > dt[j]:
+                    temp = dt[i]
+                    dt[i] = dt[j]
+                    dt[j] = temp
                     result = result.change_rows(i + 1, j + 1)
-                else:
-                    continue
         return result
 
 
