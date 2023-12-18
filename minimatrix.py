@@ -21,6 +21,40 @@ class Matrix:
             dim: 一个元组 (n, m) 表示矩阵的形状
             data: 一个二维的嵌套列表，表示矩阵的数据
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+	def shape(self):
+		r"""
+		返回矩阵的形状 dim
+		"""
+		return self.dim
+	
+	def reshape(self, newdim):
+		r"""
+		将矩阵从(m,n)维拉伸为newdim=(m1,n1)
+		该函数不改变 self
+		
+		Args:
+			newdim: 一个元组 (m1, n1) 表示拉伸后的矩阵形状。如果 m1 * n1 不等于 self.dim[0] * self.dim[1],
+					应抛出异常
+		
+		Returns:
+			Matrix: 一个 Matrix 类型的返回结果, 表示 reshape 得到的结果
+		"""
+		if newdim[0]*newdim[1] != self.dim[0]*self.dim[1]:
+			raise ValueError("Invalid newdim")
+		new_matrix_data = [[0]*newdim[1] for x in range(newdim[0])]
+		for i in range(self.dim[0]):
+			for j in range(self.dim[1]):
+				index = j + self.dim[1]*i
+				m = index//newdim[1]
+				n = index%newdim[1]
+				new_matrix_data[m][n] = self.data[i][j]
+		new_matrix = Matrix(data=new_matrix_data)
+		return new_matrix
+=======
+>>>>>>> Stashed changes
        Examples:
         >>> mat1 = Matrix(dim=(2, 3), init_value=0)
         >>> print(mat1)
@@ -35,7 +69,13 @@ class Matrix:
 
     def __init__(self, data=None, dim=None, init_value=0):
         if data == None and dim == None:
+<<<<<<< Updated upstream
             raise TypeError("Arguments 'data' and 'dim' cannot be None in the meantime.")
+=======
+            raise TypeError(
+                "Arguments 'data' and 'dim' cannot be None in the meantime."
+            )
+>>>>>>> Stashed changes
         elif data == None:
             self.dim = dim
             self.data = [[init_value] * (dim[1]) for x in range(dim[0])]
@@ -81,6 +121,10 @@ class Matrix:
                 new_matrix_data[m][n] = self.data[i][j]
         new_matrix = Matrix(data=new_matrix_data)
         return new_matrix
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
     def dot(self, other):
         r"""
@@ -200,11 +244,25 @@ class Matrix:
         Args:
                 other: 参与运算的另一个 Matrix
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+		Returns:
+			Matrix: Kronecke product 的计算结果
+		"""
+		pass
+	
+	def __getitem__(self, key):
+		r"""
+		实现 Matrix 的索引功能，即 Matrix 实例可以通过 [] 获取矩阵中的元素（或子矩阵）
+=======
+>>>>>>> Stashed changes
         Returns:
                 Matrix: Kronecke product 的计算结果
         """
         for i in range(self.dim[0]):
             for j in range(self.dim[1]):
+<<<<<<< Updated upstream
                 if j ==0:
                     m0 = other.num_mul(self[i,j])
                 else:
@@ -213,11 +271,25 @@ class Matrix:
                 m1 = m0
             else:
                 m1 = m1.mergematrix(m0,1)
+=======
+                if j == 0:
+                    m0 = other.num_mul(self[i, j])
+                else:
+                    m0 = m0.mergematrix(other.num_mul(self[i, j]))
+            if i == 0:
+                m1 = m0
+            else:
+                m1 = m1.mergematrix(m0, 1)
+>>>>>>> Stashed changes
         return m1
 
     def __getitem__(self, key):
         r"""
         实现 Matrix 的索引功能，即 Matrix 实例可以通过 [] 获取矩阵中的元素（或子矩阵）
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
         x[key] 具备以下基本特性：
         1. 单值索引
@@ -296,20 +368,44 @@ class Matrix:
                          [8 9 3 4]]
         """
 
+<<<<<<< Updated upstream
         if type(key[0])== int and type(key[1]) == int:
             self.data[key[0]][key[1]] = value
         else:
             if len(self.data[key[0]]) != value.dim[0] or len(self.data[key[0]][0][key[1]]) != value.dim[1]:
+=======
+<<<<<<< Updated upstream
+	def __pow__(self, n):
+		r"""
+		矩阵的n次幂，n为自然数
+		该函数应当不改变 self 的内容
+=======
+        if type(key[0]) == int and type(key[1]) == int:
+            self.data[key[0]][key[1]] = value
+        else:
+            if (
+                len(self.data[key[0]]) != value.dim[0]
+                or len(self.data[key[0]][0][key[1]]) != value.dim[1]
+            ):
+>>>>>>> Stashed changes
                 raise ValueError("The dimensions of matrices don't match.")
             else:
                 for i in range(value.dim[0]):
                     self.data[key[0]][i][key[1]] = value.data[i]
         return self.data
+<<<<<<< Updated upstream
       
+=======
+
+>>>>>>> Stashed changes
     def __pow__(self, n):
         r"""
         矩阵的n次幂，n为自然数
         该函数应当不改变 self 的内容
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
         Args:
                 n: int, 自然数
@@ -468,6 +564,7 @@ class Matrix:
         """
         pass
 
+<<<<<<< Updated upstream
     def guass(self):
         '''
         Guass消元法, 给定一个 Matrix 的实例, 
@@ -478,6 +575,19 @@ class Matrix:
 
         
         
+=======
+<<<<<<< Updated upstream
+=======
+    def gauss(self):
+        """
+        Gauss消元法, 给定一个 Matrix 的实例,
+        返回其简化阶梯型(一个 Matrix 的实例)
+        """
+        result1 = self.copy()
+        result2 = result1.to_row_echelon_form()
+        return result2.to_row_standard_simplest_form()
+
+>>>>>>> Stashed changes
     def to_row_echelon_form(self):
         result = self.copy()
         result = result.normalize_rows()
@@ -487,16 +597,27 @@ class Matrix:
                 index1 += 1
                 if index1 > result.dim[1] - 1:
                     break
+<<<<<<< Updated upstream
                 
+=======
+
+>>>>>>> Stashed changes
             if index1 > result.dim[1] - 1:
                 continue
             else:
                 for j in range(i + 1, result.dim[0]):
+<<<<<<< Updated upstream
                     result = result.add_k_row1_to_row2(i + 1, j + 1, -(result[j, index1] / result[i, index1]))
+=======
+                    result = result.add_k_row1_to_row2(
+                        i + 1, j + 1, -(result[j, index1] / result[i, index1])
+                    )
+>>>>>>> Stashed changes
                 print(result)
                 result = result.normalize_rows()
         print(result)
         return result
+<<<<<<< Updated upstream
     
     def to_row_standard_simplest_form(self):
         result = self.copy()
@@ -522,10 +643,36 @@ class Matrix:
                     result[i, j] = 1
                 elif abs(result[i, j]) < 1e-14:
                     result[i, j] = 0
+=======
+
+    def to_row_standard_simplest_form(self):
+        result = self.copy()
+        for i in range(result.dim[0]):
+            if result[i : i + 1, :].is_zero():
+                break
+            elif i == 0:
+                index1 = 0
+                while result[0, index1] == 0:
+                    index1 += 1
+                result = result.k_times_row(1, 1 / result[0, index1])
+
+            else:
+                index2 = 0
+                while result[i, index2] == 0:
+                    index2 += 1
+                result = result.k_times_row(i + 1, 1 / result[i, index2])
+
+                for j in range(i):
+                    result = result.add_k_row1_to_row2(i + 1, j + 1, -result[j, index2])
+
+                result = result.normalize_rows()
+
+>>>>>>> Stashed changes
         return result
 
     def normalize_rows(self):
         result = self.copy()
+<<<<<<< Updated upstream
         dt = {}
         for i in range(result.dim[0]):
             column_index = 0
@@ -549,10 +696,36 @@ class Matrix:
         temp = result[row2 - 1:row2, :]
         result[row2 - 1:row2, :] = result[row1 - 1:row1, :]
         result[row1 - 1:row1, :] = temp
+=======
+        for i in range(result.dim[0] - 1):
+            for j in range(i + 1, result.dim[0]):
+                flag1 = 0
+                flag2 = 0
+                while result[i, flag1] == 0:
+                    if flag1 == result.dim[1] - 1:
+                        break
+                    flag1 += 1
+                while result[j, flag2] == 0:
+                    if flag2 == result.dim[1] - 1:
+                        break
+                    flag2 += 1
+                if flag2 < flag1:
+                    result = result.change_rows(i + 1, j + 1)
+                else:
+                    continue
+        return result
+
+    def change_rows(self, row1, row2):
+        result = self.copy()
+        temp = result[row2 - 1 : row2, :]
+        result[row2 - 1 : row2, :] = result[row1 - 1 : row1, :]
+        result[row1 - 1 : row1, :] = temp
+>>>>>>> Stashed changes
         return result
 
     def k_times_row(self, row, k):
         result = self.copy()
+<<<<<<< Updated upstream
         result[row - 1:row, :] = result[row - 1:row, :].num_mul(k)
         return result
     
@@ -561,6 +734,15 @@ class Matrix:
         result[row2 - 1:row2, :] += result[row1 - 1:row1, :].num_mul(k)
         return result
 
+=======
+        result[row - 1 : row, :] = result[row - 1 : row, :].num_mul(k)
+        return result
+
+    def add_k_row1_to_row2(self, row1, row2, k):
+        result = self.copy()
+        result[row2 - 1 : row2, :] += result[row1 - 1 : row1, :].num_mul(k)
+        return result
+>>>>>>> Stashed changes
 
     def is_zero(self):
         for i in range(self.dim[0]):
@@ -572,6 +754,7 @@ class Matrix:
 
     def num_mul(self, n):
         """
+<<<<<<< Updated upstream
         矩阵的数乘 
         其中n为int/float类型的实例,
         返回一个Matrix实例 不改变self
@@ -583,6 +766,19 @@ class Matrix:
         return result
 
     def mergematrix(self,other,axis=0):
+=======
+        矩阵的数乘
+        其中n为int/float类型的实例,
+        返回一个Matrix实例 不改变self
+        """
+        result = Matrix([[0] * self.dim[1] for x in range(self.dim[0])])
+        for i in range(self.dim[0]):
+            for j in range(self.dim[1]):
+                result[i, j] = self[i, j] * n
+        return result
+
+    def mergematrix(self, other, axis=0):
+>>>>>>> Stashed changes
         r"""
         合并两个矩阵, axis为合并方向,
         axis = 0横向合并,axis = 1纵向合并
@@ -590,21 +786,36 @@ class Matrix:
         """
         temp = copy.deepcopy(self.data)
         match axis:
+<<<<<<< Updated upstream
             case 0 :
+=======
+            case 0:
+>>>>>>> Stashed changes
                 if self.dim[0] != other.dim[0]:
                     raise ValueError("The dimensions of matrices don't match.")
                 else:
                     for i in range(self.dim[0]):
                         temp[i].extend(other.data[i])
+<<<<<<< Updated upstream
             case 1 :
+=======
+            case 1:
+>>>>>>> Stashed changes
                 if self.dim[1] != other.dim[1]:
                     raise ValueError("The dimensions of matrices don't match.")
                 else:
                     temp += other.data
             case _:
                 raise ValueError
+<<<<<<< Updated upstream
         return Matrix(temp)  
     
+=======
+        return Matrix(temp)
+
+
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 def I(n):
     """
     return an n*n unit matrix
@@ -613,6 +824,7 @@ def I(n):
     for i in range(n):
         zero[i][i] = 1
     return Matrix(data=zero)
+
 
 def narray(dim, init_value=1):  # dim (,,,,,), init为矩阵元素初始值
     r"""
@@ -629,6 +841,7 @@ def narray(dim, init_value=1):  # dim (,,,,,), init为矩阵元素初始值
     res = Matrix(None, dim, init_value)
     return res
 
+
 def arange(start, end, step):
     r"""
     返回一个1*n 的 narray 其中的元素类同 range(start, end, step)
@@ -644,6 +857,7 @@ def arange(start, end, step):
     result = [[x for x in range(start, end, step)]]
     return Matrix(data=result)
 
+
 def zeros(dim):
     r"""
     返回一个维数为dim 的全0 narray
@@ -656,6 +870,7 @@ def zeros(dim):
     """
     zero_matrix = [[0 for x in range(dim[1])] for i in range(dim[0])]
     return Matrix(data=zero_matrix)
+
 
 def zeros_like(matrix):
     r"""
@@ -677,6 +892,7 @@ def zeros_like(matrix):
     columns = matrix.dim[1]
     return zeros((rows, columns))
 
+
 def ones(dim):
     r"""
     返回一个维数为dim 的全1 narray
@@ -684,6 +900,7 @@ def ones(dim):
     """
     one_matrix = [[1 for x in range(dim[1])] for i in range(dim[0])]
     return Matrix(data=one_matrix)
+
 
 def ones_like(matrix):
     r"""
@@ -693,6 +910,7 @@ def ones_like(matrix):
     rows = matrix.dim[0]
     columns = matrix.dim[1]
     return ones((rows, columns))
+
 
 def nrandom(dim):
     r"""
@@ -705,12 +923,14 @@ def nrandom(dim):
             res.data[i][j] = random.random()
     return res
 
+
 def nrandom_like(matrix):
     r"""
     返回一个维数和matrix一样 的随机 narray
     参数与返回值类型同 zeros_like
     """
     return nrandom(matrix.dim)
+
 
 def concatenate(items, axis=0):
     r"""
@@ -727,6 +947,20 @@ def concatenate(items, axis=0):
     Returns:
             Matrix: 一个 Matrix 类型的拼接结果
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+	Examples:
+		>>> A, B = Matrix([[0, 1, 2]]), Matrix([[3, 4, 5]])
+		>>> concatenate((A, B))
+		>>> [[0 1 2]
+			 [3 4 5]]
+		>>> concatenate((A, B, A), axis=1)
+		>>> [[0 1 2 3 4 5 0 1 2]]
+	"""
+	pass
+=======
+>>>>>>> Stashed changes
     Examples:
             >>> A, B = Matrix([[0, 1, 2]]), Matrix([[3, 4, 5]])
             >>> concatenate((A, B))
@@ -736,10 +970,19 @@ def concatenate(items, axis=0):
             >>> [[0 1 2 3 4 5 0 1 2]]
     """
     temp = items[0]
+<<<<<<< Updated upstream
     if len(items)>1:
         for i in items[1:]:
             temp = temp.mergematrix(i,axis)
     return(temp)
+=======
+    if len(items) > 1:
+        for i in items[1:]:
+            temp = temp.mergematrix(i, axis)
+    return temp
+>>>>>>> Stashed changes
+
+>>>>>>> Stashed changes
 
 def vectorize(func):
     r"""
@@ -784,6 +1027,7 @@ def vectorize(func):
 
 
 if __name__ == "__main__":
+<<<<<<< Updated upstream
     print("test here")
 
     A = Matrix([[1,1,4],[5,1,4]])
@@ -791,3 +1035,17 @@ if __name__ == "__main__":
     print(A[1:,:])
 
 
+=======
+<<<<<<< Updated upstream
+	print("test here")
+A = Matrix(data=[[1,2],[3,4]])
+print(A.dot(A))
+=======
+    print("test here")
+
+A = Matrix([[1, 5, 3], [5, 1, 4]])
+B = Matrix([[1, 5, 3], [5, 1, 4]])
+lst = [A, B]
+print(concatenate(lst, 1))
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
