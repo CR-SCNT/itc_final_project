@@ -1,4 +1,4 @@
-# Fra/ework(for IEEE course final project
+# F/a/ework(for IEEE course final project
 # Fan Cheng, 2022
 
 import random
@@ -451,7 +451,19 @@ class Matrix:
         Returns:
                 一个 Python int 或者 float, 表示计算结果
         """
-        pass
+        if self.dim[0] != self.dim[1]:
+            raise ValueError("It's not a square matirx.")
+        else:
+            square_matrix = self.copy()
+            square_matrix, flag = square_matrix.to_row_echelon_form_for_det()
+            ans = 1
+            for i in range(square_matrix.dim[0]):
+                ans *= square_matrix[i, i]
+            if flag % 2 == 1:
+                ans *= -1
+            return ans
+    
+
 
     def inverse(self):
         r"""
@@ -462,8 +474,18 @@ class Matrix:
         Returns:
                 Matrix: 一个 Matrix 实例，表示逆矩阵
         """
-
-        pass
+        A = self.copy()
+        if A.dim[0] != A.dim[1]:
+            raise ValueError("It's not a square matirx.")
+        elif A.det() == 0:
+            raise ValueError("It's a singular matirx.")
+        else:
+            E = I(A.dim[0])
+            A_E = A.mergematrix(other=E, axis=0)
+            E_A_reversed = A_E.to_row_standard_simplest_form()
+            result = E_A_reversed[:, A.dim[0]:]
+            return result
+            
 
     def rank(self):
         r"""
@@ -474,7 +496,13 @@ class Matrix:
         Returns:
                 一个 Python int 表示计算结果
         """
-        pass
+        result = self.copy()
+        result = result.to_row_echelon_form()
+        ans = 0
+        for i in range(result.dim[0]):
+            if not result[i:i + 1, :].is_zero():
+                ans += 1
+        return ans
 
     def guass(self):
         '''
@@ -494,17 +522,32 @@ class Matrix:
             while result[i, index1] == 0:
                 index1 += 1
                 if index1 > result.dim[1] - 1:
-                    break
-                
+                    break  
             if index1 > result.dim[1] - 1:
                 continue
             else:
                 for j in range(i + 1, result.dim[0]):
                     result = result.add_k_row1_to_row2(i + 1, j + 1, -(result[j, index1] / result[i, index1]))
-                print(result)
                 result = result.normalize_rows()
-        print(result)
         return result
+    
+    def to_row_echelon_form_for_det(self):
+        result = self.copy()
+        flag = 0
+        result, flag = result.normalize_rows_for_det(flag)
+        for i in range(result.dim[0] - 1):
+            index1 = 0
+            while result[i, index1] == 0:
+                index1 += 1
+                if index1 > result.dim[1] - 1:
+                    break  
+            if index1 > result.dim[1] - 1:
+                continue
+            else:
+                for j in range(i + 1, result.dim[0]):
+                    result = result.add_k_row1_to_row2(i + 1, j + 1, -(result[j, index1] / result[i, index1]))
+                result, flag = result.normalize_rows_for_det(flag)
+        return result, flag
     
     def to_row_standard_simplest_form(self):
         result = self.copy()
@@ -551,6 +594,24 @@ class Matrix:
                     result = result.change_rows(i + 1, j + 1)
         return result
 
+    def normalize_rows_for_det(self, flag):
+        result = self.copy()
+        dt = {}
+        for i in range(result.dim[0]):
+            column_index = 0
+            while result[i, column_index] == 0:
+                column_index += 1
+                if column_index == result.dim[1]:
+                    break
+            dt[i] = column_index
+        for i in range(result.dim[0]):
+            for j in range(i + 1, result.dim[0]):
+                if dt[i] > dt[j]:
+                    temp = dt[i]
+                    dt[i] = dt[j]
+                    dt[j] = temp
+                    result, flag = result.change_rows_for_det(i + 1, j + 1, flag)
+        return result, flag
 
     def change_rows(self, row1, row2):
         result = self.copy()
@@ -559,6 +620,11 @@ class Matrix:
         result[row1 - 1:row1, :] = temp
         return result
 
+    def change_rows_for_det(self, row1, row2, flag):
+        result = self.copy()
+        result = result.change_rows(row1=row1, row2=row2)
+        flag += 1
+        return result, flag
     def k_times_row(self, row, k):
         result = self.copy()
         result[row - 1:row, :] = result[row - 1:row, :].num_mul(k)
