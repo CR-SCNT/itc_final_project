@@ -1,4 +1,3 @@
-itc_final_project_zjc
 # F/a/ework(for IEEE course final project
 # Fan Cheng, 2022
 
@@ -840,4 +839,6 @@ def vectorize(func):
 
 if __name__ == "__main__":
     print("test here")
+    A = Matrix(data=[[1,1],[1,1]])
+    print(A.dot(A))
     
