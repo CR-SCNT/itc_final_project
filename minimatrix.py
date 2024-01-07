@@ -1,4 +1,3 @@
-itc_final_project_zjc
 # F/a/ework(for IEEE course final project
 # Fan Cheng, 2022
 
@@ -456,8 +455,6 @@ class Matrix:
                 ans *= -1
             return round(ans, 4)
     
-
-
     def inverse(self):
         r"""
         计算非奇异方阵的逆矩阵。对于非方阵或奇异阵的情形应抛出异常。
@@ -479,7 +476,6 @@ class Matrix:
             result = A_E[:, A.dim[0]:]
             return result
             
-
     def rank(self):
         r"""
         计算矩阵的秩
@@ -504,8 +500,6 @@ class Matrix:
         '''
         result1 = self.copy()
         return result1.to_row_standard_simplest_form()
-
-        
         
     def to_row_echelon_form(self):
         self.normalize_rows()
@@ -521,7 +515,6 @@ class Matrix:
                 for j in range(i + 1, self.dim[0]):
                     self.add_k_row1_to_row2(i + 1, j + 1, -(self[j, index1] / self[i, index1]))
                 self.normalize_rows()
-
     
     def to_row_echelon_form_for_det(self):
         flag = 0
@@ -561,7 +554,6 @@ class Matrix:
             for j in range(self.dim[1]):
                 self[i, j] = round(self[i, j], 4)
 
-
     def normalize_rows(self):
         dt = {}
         for i in range(self.dim[0]):
@@ -578,7 +570,6 @@ class Matrix:
                     dt[i] = dt[j]
                     dt[j] = temp
                     self.change_rows(i + 1, j + 1)
-
 
     def normalize_rows_for_det(self, flag):
         dt = {}
@@ -603,7 +594,6 @@ class Matrix:
         self[row2 - 1:row2, :] = self[row1 - 1:row1, :]
         self[row1 - 1:row1, :] = temp
 
-
     def change_rows_for_det(self, row1, row2, flag):
         self.change_rows(row1=row1, row2=row2)
         flag += 1
@@ -611,11 +601,9 @@ class Matrix:
 
     def k_times_row(self, row, k):
         self[row - 1:row, :] = self[row - 1:row, :].num_mul(k)
-
     
     def add_k_row1_to_row2(self, row1, row2, k):
         self[row2 - 1:row2, :] += self[row1 - 1:row1, :].num_mul(k)
-
 
     def is_zero(self):
         for i in range(self.dim[0]):
@@ -840,4 +828,5 @@ def vectorize(func):
 
 if __name__ == "__main__":
     print("test here")
+
     
