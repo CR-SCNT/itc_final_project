@@ -2,10 +2,21 @@ import minimatrix
 
 
 
-mat_data = [[1,2,3],[4,5,6],[7,8,9]]
+mat_data = [[1,2,1],[4,5,6],[7,8,9]]
 mat = minimatrix.Matrix(data=mat_data)
 print(mat)
-
+print(mat.det())
+print(mat.T())
+print(mat.shape())
+print(mat.copy())
+print(mat.inverse())
+print(mat.sum())
+print(mat.Kronecker_product(mat))
+print(mat.rank())
+print(mat+mat,mat-mat,mat*mat,mat**2,len(mat))
+print(mat[1,2],mat[1:2,0:1])
+mat[1:2,0:1] = minimatrix.Matrix([[1]])
+print(mat)
 m24 = minimatrix.arange(0,24,1)
 print(m24)
 
@@ -29,6 +40,6 @@ def least_squares_method(m,n):
     w_ = (((X.T().dot(X)).inverse()).dot(X.T())).dot(Y)
     return w ,w_
 
-a,b=least_squares_method(15,50)
+a,b=least_squares_method(1000,100)
 print(a)
 print(b)
